@@ -255,7 +255,10 @@ class BigNumber {
 		return true;
 	}
 	
-	
+	bool operator!=(const BigNumber &other) const {
+		return !(*this==other);
+	}
+
     private:
         int* digits;
         int size;
