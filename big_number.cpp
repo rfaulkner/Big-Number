@@ -40,7 +40,7 @@ class BigNumber {
             for (int i = 0; i < dim; i++) this->digits[i] = 0;
         }
 
-        BigNumber(int dim, long val) {
+	BigNumber(int dim, long val) {
             int i;
 
             this->digits = new int[dim];
@@ -240,8 +240,25 @@ class BigNumber {
             return result;
         }
 
+	bool operator==(const BigNumber &other) const {
+		
+		// If the sizes are not the values are not equal
+		if (this->size != other.size)
+			return false;
+		
+		// Test each digit to ensure they match
+		for (int i = 0; i < this->size; i++)
+			if (this->digits[i] != other.get_digit(i))
+				return false;
+		
+		// Everything matches, success!
+		return true;
+	}
+	
+	
     private:
         int* digits;
         int size;
         bool is_neg;
 };
+
