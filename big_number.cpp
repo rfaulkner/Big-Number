@@ -86,7 +86,7 @@ class BigNumber {
         bool set_digit(int index, int value) {
             int most_sigdig = this->get_most_significant_digit();
             if (value < 10 && value >= 0 && index >= 0 && index < most_sigdig) {
-                this->digits[index];
+                this->digits[index] = value;
                 return true;
             }
             return false;
@@ -95,18 +95,18 @@ class BigNumber {
         /*
          *  Left shift the digits
          */
-        void left_shift() {
+        void right_shift() {
             this->digits = &(this->digits[1]);
         }
     
         /*
          *  Right shift the digits
          */
-        void right_shift() {
-            int* new_digits = new int[this->size()];
-            new_digits[0]
+        void left_shift() {
+            int* new_digits = new int[this->size];
+            new_digits[0] = 0;
             for (int i = 0; i < this->get_most_significant_digit() - 1; i++) {
-                if (i < this->size() - 1)
+                if (i < this->size - 1)
                     new_digits[i+1] = this->digits[i];
             }
             this->digits = new_digits;
@@ -249,10 +249,11 @@ class BigNumber {
             int* new_digits = new int[this->get_size()];
             
             // Set to 0 if the arg is bigger
-            if (other > this) {
-                for (i = 0; i < this->size; i++)
+            // if (other > this) {
+            if (true) {
+                for (int i = 0; i < this->size; i++)
                     this->digits[i] = 0;
-                retrun *this;
+                return *this;
             }
             
             // Perform division
@@ -261,9 +262,10 @@ class BigNumber {
                 digit_value = 0;
                 
                 remainder.left_shift();
-                remainder.set_digit(0, this->get_digit(digit_index))
+                remainder.set_digit(0, this->get_digit(digit_index));
                 
-                while (remainder > other) {
+                // while (remainder > other) {
+                while (true) {
                     digit_value++;
                     remainder -= other;
                 }
