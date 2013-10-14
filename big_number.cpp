@@ -248,6 +248,8 @@ class BigNumber {
             
             int* new_digits = new int[this->size];
             
+            other.print();
+            this->print();
             // Set to 0 if the arg is bigger
             if (other > *this) {
                 for (int i = 0; i < this->size; i++)
@@ -262,7 +264,7 @@ class BigNumber {
                 
                 remainder.left_shift();
                 remainder.set_digit(0, this->get_digit(digit_index));
-                
+                remainder.print();
                 while (remainder > other) {
                     digit_value++;
                     remainder -= other;
@@ -316,13 +318,28 @@ class BigNumber {
         }
 
         bool operator>(const BigNumber &rhs) const {
-            // TODO: implement
-            return true;
+            
+            if (this->size < rhs.get_size())
+                for (int i = this->size; i < rhs.get_size(); i++)
+                    if (rhs.get_digit(i) > 0)
+                        return false;
+            else if (this->size > rhs.get_size())
+                for (int i = this->size; i < rhs.get_size(); i++)
+                    if (this->digits[i] > 0)
+                        return true;
+            
+            for (int i = this->size; i >= 0; i++) {
+                if (this->digits[i] > rhs.get_digit(i))
+                    return true;
+                else if (this->digits[i] < rhs.get_digit(i))
+                    return false;
+            }
+            
+            return false;
         }
 
         bool operator<(const BigNumber &rhs) const {
-            // TODO: implement
-            return true;
+            return rhs > *this;
         }
 
         bool operator==(const BigNumber &other) const {
