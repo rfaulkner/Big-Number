@@ -204,6 +204,49 @@ class BigNumber {
         }
 
         /*
+         *  Divide this big number by the arg.  Uses long division.
+         *
+         */
+        BigNumber & operator/=(const BigNumber& other)
+        {
+            int digit_value = 0;
+            int digit_index = this->get_most_significant_digit();
+            
+            BigNumber remainder(this->size, 0);
+            
+            int* new_digits = new int[this->get_size()];
+            
+            // Set to 0 if the arg is bigger
+            if (other > this) {
+                for (i = 0; i < this->size; i++)
+                    this->digits[i] = 0;
+                retrun *this;
+            }
+            
+            // Perform division
+            while (digit_index >= 0) {
+                
+                digit_value = 0;
+                
+                remainder.left_shift();
+                remainder.set_digit(0, this->get_digit(digit_index))
+                
+                while (remainder > other) {
+                    digit_value++;
+                    remainder -= other;
+                }
+                
+                new_digits[digit_index] = digit_value;
+                digit_index--;
+            }
+    
+            // Assign result to this
+            this->digits = new_digits;
+            
+            return *this;
+        }
+    
+        /*
          * Multiplies this big number by the arg
          */
         BigNumber & operator*=(const int &other) {
