@@ -80,6 +80,38 @@ class BigNumber {
             return digits_cp;
         }
 
+        /*
+         *  Set a digit in the array
+         */
+        bool set_digit(int index, int value) {
+            int most_sigdig = this->get_most_significant_digit();
+            if (value < 10 && value >= 0 && index >= 0 && index < most_sigdig) {
+                this->digits[index];
+                return true;
+            }
+            return false;
+        }
+
+        /*
+         *  Left shift the digits
+         */
+        void left_shift() {
+            this->digits = &(this->digits[1]);
+        }
+    
+        /*
+         *  Right shift the digits
+         */
+        void right_shift() {
+            int* new_digits = new int[this->size()];
+            new_digits[0]
+            for (int i = 0; i < this->get_most_significant_digit() - 1; i++) {
+                if (i < this->size() - 1)
+                    new_digits[i+1] = this->digits[i];
+            }
+            this->digits = new_digits;
+        }
+    
         BigNumber & operator=(const BigNumber &rhs)
         {
             // Check for self-assignment!
