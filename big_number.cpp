@@ -246,11 +246,10 @@ class BigNumber {
             
             BigNumber remainder(this->size, 0);
             
-            int* new_digits = new int[this->get_size()];
+            int* new_digits = new int[this->size];
             
             // Set to 0 if the arg is bigger
-            // if (other > this) {
-            if (true) {
+            if (other > *this) {
                 for (int i = 0; i < this->size; i++)
                     this->digits[i] = 0;
                 return *this;
@@ -264,8 +263,7 @@ class BigNumber {
                 remainder.left_shift();
                 remainder.set_digit(0, this->get_digit(digit_index));
                 
-                // while (remainder > other) {
-                while (true) {
+                while (remainder > other) {
                     digit_value++;
                     remainder -= other;
                 }
@@ -315,6 +313,16 @@ class BigNumber {
             BigNumber result = *this;
             result *= other;
             return result;
+        }
+
+        bool operator>(const BigNumber &rhs) const {
+            // TODO: implement
+            return true;
+        }
+
+        bool operator<(const BigNumber &rhs) const {
+            // TODO: implement
+            return true;
         }
 
     private:
