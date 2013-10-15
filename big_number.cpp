@@ -40,7 +40,7 @@ class BigNumber {
             for (int i = 0; i < dim; i++) this->digits[i] = 0;
         }
 
-	BigNumber(int dim, long val) {
+        BigNumber(int dim, long val) {
             int i;
 
             this->digits = new int[dim];
@@ -55,8 +55,8 @@ class BigNumber {
         ~BigNumber() { delete[] this->digits; }
 
         /*
-        * Prints the number
-        */
+         *  Prints the number
+         */
         void print() const {
             for (int i = this->size - 1; i >= 0; i--) cout << this->digits[i];
             cout << endl;
@@ -93,10 +93,17 @@ class BigNumber {
         }
 
         /*
-         *  Left shift the digits
+         *  Right shift the digits
          */
         void right_shift() {
-            this->digits = &(this->digits[1]);
+
+            int* new_digits = new int[this->size];
+            for (int i = 1; i < this->size; i++) {
+                new_digits[i - 1] = this->digits[i];
+            }
+            new_digits[this->size - 1] = 0;
+            delete[] this->digits;
+            this->digits = new_digits;
         }
     
         /*
