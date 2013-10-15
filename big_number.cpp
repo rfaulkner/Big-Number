@@ -85,7 +85,7 @@ class BigNumber {
          */
         bool set_digit(int index, int value) {
             int most_sigdig = this->get_most_significant_digit();
-            if (value < 10 && value >= 0 && index >= 0 && index < most_sigdig) {
+            if (value < 10 && value >= 0 && index >= 0 && index <= most_sigdig) {
                 this->digits[index] = value;
                 return true;
             }
@@ -104,11 +104,14 @@ class BigNumber {
          */
         void left_shift() {
             int* new_digits = new int[this->size];
-            new_digits[0] = 0;
-            for (int i = 0; i < this->get_most_significant_digit() - 1; i++) {
-                if (i < this->size - 1)
-                    new_digits[i+1] = this->digits[i];
+            
+            for (int i = this->size - 1; i > 0; i--) {
+                new_digits[i] = this->digits[i-1];
             }
+            new_digits[0] = 0;
+            
+            delete[] this->digits;
+            
             this->digits = new_digits;
         }
     
@@ -248,8 +251,6 @@ class BigNumber {
             
             int* new_digits = new int[this->size];
             
-            other.print();
-            this->print();
             // Set to 0 if the arg is bigger
             if (other > *this) {
                 for (int i = 0; i < this->size; i++)
@@ -264,8 +265,8 @@ class BigNumber {
                 
                 remainder.left_shift();
                 remainder.set_digit(0, this->get_digit(digit_index));
-                remainder.print();
-                while (remainder > other) {
+                
+                while (remainder >= other) {
                     digit_value++;
                     remainder -= other;
                 }
@@ -299,13 +300,13 @@ class BigNumber {
             return *this;
         }
 
-         const BigNumber operator+(const BigNumber &other) const {
+        const BigNumber operator+(const BigNumber &other) const {
             BigNumber result = *this;
             result += other;
             return result;
          }
 
-         const BigNumber operator-(const BigNumber &other) const {
+        const BigNumber operator-(const BigNumber &other) const {
             BigNumber result = *this;
             result -= other;
             return result;
@@ -328,7 +329,7 @@ class BigNumber {
                     if (this->digits[i] > 0)
                         return true;
             
-            for (int i = this->size; i >= 0; i++) {
+            for (int i = this->size; i >= 0; i--) {
                 if (this->digits[i] > rhs.get_digit(i))
                     return true;
                 else if (this->digits[i] < rhs.get_digit(i))
@@ -340,6 +341,14 @@ class BigNumber {
 
         bool operator<(const BigNumber &rhs) const {
             return rhs > *this;
+        }
+    
+        bool operator>=(const BigNumber &rhs) const {
+            return *this > rhs || *this == rhs;
+        }
+
+        bool operator<=(const BigNumber &rhs) const {
+            return *this < rhs || *this == rhs;
         }
 
         bool operator==(const BigNumber &other) const {
