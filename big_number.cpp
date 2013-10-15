@@ -318,6 +318,12 @@ class BigNumber {
             return result;
         }
 
+        const BigNumber operator/(const BigNumber &other) const {
+            BigNumber result = *this;
+            result /= other;
+            return result;
+        }
+
         bool operator>(const BigNumber &rhs) const {
             
             if (this->size < rhs.get_size())
