@@ -121,7 +121,14 @@ class BigNumber {
             
             this->digits = new_digits;
         }
-    
+
+        /*
+         *  Right shift the digits
+         */
+        BigNumber* get_last_remainder() {
+            return this->last_remainder;
+        }
+
         BigNumber & operator=(const BigNumber &rhs)
         {
             // Check for self-assignment!
@@ -254,7 +261,7 @@ class BigNumber {
             int digit_value = 0;
             int digit_index = this->get_most_significant_digit();
             
-            BigNumber remainder(this->size, 0);
+            BigNumber* remainder = new BigNumber(this->size, 0);
             
             int* new_digits = new int[this->size];
             
@@ -270,20 +277,23 @@ class BigNumber {
                 
                 digit_value = 0;
                 
-                remainder.left_shift();
-                remainder.set_digit(0, this->get_digit(digit_index));
+                remainder->left_shift();
+                remainder->set_digit(0, this->get_digit(digit_index));
                 
-                while (remainder >= other) {
+                while (*remainder >= other) {
                     digit_value++;
-                    remainder -= other;
+                    *remainder -= other;
                 }
                 
                 new_digits[digit_index] = digit_value;
                 digit_index--;
             }
     
-            // Assign result to this
+            // Assign result and remainder
+            delete[] this->digits;
             this->digits = new_digits;
+                        
+            this->last_remainder = remainder;
             
             return *this;
         }
@@ -384,6 +394,8 @@ class BigNumber {
         }
 
     private:
+    
+        BigNumber* last_remainder;
         int* digits;
         int size;
         bool is_neg;
