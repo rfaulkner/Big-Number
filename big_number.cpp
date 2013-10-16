@@ -28,11 +28,12 @@ class BigNumber {
 
         BigNumber(const BigNumber& bn)
         {
-            this->digits = new int[bn.get_size()];
+            
+            this->digits = new int[bn.get_size()];            
             this->size = bn.get_size();
             this->is_neg = bn.is_negative_number();
             this->digits = bn.get_digits_copy();
-            this->remainder = NULL;
+            this->remainder = bn.get_remainder_copy();
         }
 
         BigNumber(int dim) {
@@ -59,7 +60,7 @@ class BigNumber {
         ~BigNumber() {
             delete[] this->digits;
             if (this->remainder != NULL)
-                delete this->remainder;
+                    delete[] this->remainder;
         }
 
         /*
@@ -70,9 +71,21 @@ class BigNumber {
             cout << endl;
         }
 
+        /*
+         *  Prints the remainder
+         */
+        void print_remainder() const {
+            if (this->remainder != NULL)
+            {
+                for (int i = this->size - 1; i >= 0; i--) cout << this->remainder[i];
+                cout << endl;
+            }
+        }
+
         bool is_negative_number() const { return this->is_neg; }
         int get_size() const { return this->size; }
         int get_digit(int index) const { return this->digits[index]; }
+
         int get_most_significant_digit() const
         {
             for (int i = this->size - 1; i >= 0; i--)
@@ -80,6 +93,7 @@ class BigNumber {
                     return i;
              return 0;
         }
+        
         int* get_digits_copy() const
         {
             int* digits_cp = new int[this->size];
@@ -88,12 +102,36 @@ class BigNumber {
             return digits_cp;
         }
 
+        int* get_remainder_copy() const
+        {
+            if (this->remainder != NULL)
+            {
+                int* rem_cp = new int[this->size];
+                for (int i = 0; i < this->size; i++)
+                    rem_cp[i] = this->remainder[i];
+                return rem_cp;
+            }
+            return NULL;
+        }
+    
+        bool has_remainder() {
+            if (this->remainder != NULL)
+            {
+                for (int i = 0; i < this->size; i++)
+                    if (this->remainder[i] > 0)
+                        return true;
+            }
+            return false;
+        }
+
         /*
          *  Set a digit in the array
          */
-        bool set_digit(int index, int value) {
+        bool set_digit(int index, int value) 
+        {
             int most_sigdig = this->get_most_significant_digit();
-            if (value < 10 && value >= 0 && index >= 0 && index <= most_sigdig) {
+            if (value < 10 && value >= 0 && index >= 0 && index <= most_sigdig) 
+            {
                 this->digits[index] = value;
                 return true;
             }
@@ -103,12 +141,13 @@ class BigNumber {
         /*
          *  Right shift the digits
          */
-        void right_shift() {
-
+        void right_shift() 
+        {
             int* new_digits = new int[this->size];
-            for (int i = 1; i < this->size; i++) {
+            
+            for (int i = 1; i < this->size; i++) 
                 new_digits[i - 1] = this->digits[i];
-            }
+
             new_digits[this->size - 1] = 0;
             delete[] this->digits;
             this->digits = new_digits;
@@ -120,21 +159,12 @@ class BigNumber {
         void left_shift() {
             int* new_digits = new int[this->size];
             
-            for (int i = this->size - 1; i > 0; i--) {
+            for (int i = this->size - 1; i > 0; i--) 
                 new_digits[i] = this->digits[i-1];
-            }
-            new_digits[0] = 0;
-            
-            delete[] this->digits;
-            
-            this->digits = new_digits;
-        }
 
-        /*
-         *  Getter for the last remainder
-         */
-        int* get_last_remainder() {
-            return this->remainder;
+            new_digits[0] = 0;            
+            delete[] this->digits;            
+            this->digits = new_digits;
         }
 
         bool is_prime() {
@@ -160,7 +190,8 @@ class BigNumber {
 
             this->size = rhs.get_size();
             this->digits = rhs.get_digits_copy();
-            this->is_neg = rhs.is_negative_number();
+            this->is_neg = rhs.is_negative_number();            
+            this->remainder = rhs.get_remainder_copy();
 
             return *this;
         }
@@ -314,8 +345,10 @@ class BigNumber {
             delete[] this->digits;
             this->digits = new_digits;
             
+
             if (this->remainder != NULL)
                 delete this->remainder;
+
             this->remainder = remainder.get_digits_copy();
             
             return *this;
@@ -411,12 +444,12 @@ inline BigNumber operator-(BigNumber lhs, const BigNumber &other) {
 }
 
 inline BigNumber operator*(BigNumber lhs, const int &other) {
-    lhs *= other;
+    lhs *= other;        
     return lhs;
 }
 
 inline BigNumber operator/(BigNumber lhs, const BigNumber &other) {
-    lhs /= other;
+    lhs /= other;    
     return lhs;
 }
 
