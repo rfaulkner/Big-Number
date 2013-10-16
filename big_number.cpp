@@ -23,6 +23,7 @@ class BigNumber {
             this->digits = NULL;
             this->size = 0;
             this->is_neg = false;
+            this->remainder = NULL;
         }
 
         BigNumber(const BigNumber& bn)
@@ -31,6 +32,7 @@ class BigNumber {
             this->size = bn.get_size();
             this->is_neg = bn.is_negative_number();
             this->digits = bn.get_digits_copy();
+            this->remainder = NULL;
         }
 
         BigNumber(int dim) {
@@ -38,6 +40,7 @@ class BigNumber {
             this->size = dim;
             this->is_neg = false;
             for (int i = 0; i < dim; i++) this->digits[i] = 0;
+            this->remainder = NULL;
         }
 
         BigNumber(int dim, long val) {
@@ -50,9 +53,14 @@ class BigNumber {
                 this->digits[i] = val % 10;
                 val /= 10;
             }
+            this->remainder = NULL;
         }
 
-        ~BigNumber() { delete[] this->digits; }
+        ~BigNumber() {
+            delete[] this->digits;
+            if (this->remainder != NULL)
+                delete this->remainder;
+        }
 
         /*
          *  Prints the number
@@ -107,7 +115,7 @@ class BigNumber {
         }
     
         /*
-         *  Right shift the digits
+         *  Left shift the digits
          */
         void left_shift() {
             int* new_digits = new int[this->size];
@@ -123,12 +131,25 @@ class BigNumber {
         }
 
         /*
-         *  Right shift the digits
+         *  Getter for the last remainder
          */
-        BigNumber* get_last_remainder() {
-            return this->last_remainder;
+        int* get_last_remainder() {
+            return this->remainder;
         }
 
+        bool is_prime() {
+//            BigNumber divisor(this->size, 2);
+//            BigNumber limit = *this / divisor;
+//            
+//            while (divisor < limit) {
+//                if (*this / divisor) {
+//                    
+//                }
+//                divisor += 1;
+//            }
+            return false;
+        }
+    
         BigNumber & operator=(const BigNumber &rhs)
         {
             // Check for self-assignment!
@@ -261,9 +282,9 @@ class BigNumber {
             int digit_value = 0;
             int digit_index = this->get_most_significant_digit();
             
-            BigNumber* remainder = new BigNumber(this->size, 0);
-            
             int* new_digits = new int[this->size];
+            
+            BigNumber remainder(this->size, 0);
             
             // Set to 0 if the arg is bigger
             if (other > *this) {
@@ -277,12 +298,12 @@ class BigNumber {
                 
                 digit_value = 0;
                 
-                remainder->left_shift();
-                remainder->set_digit(0, this->get_digit(digit_index));
+                remainder.left_shift();
+                remainder.set_digit(0, this->get_digit(digit_index));
                 
-                while (*remainder >= other) {
+                while (remainder >= other) {
                     digit_value++;
-                    *remainder -= other;
+                    remainder -= other;
                 }
                 
                 new_digits[digit_index] = digit_value;
@@ -292,8 +313,10 @@ class BigNumber {
             // Assign result and remainder
             delete[] this->digits;
             this->digits = new_digits;
-                        
-            this->last_remainder = remainder;
+            
+            if (this->remainder != NULL)
+                delete this->remainder;
+            this->remainder = remainder.get_digits_copy();
             
             return *this;
         }
@@ -315,30 +338,6 @@ class BigNumber {
             }
 
             return *this;
-        }
-
-        const BigNumber operator+(const BigNumber &other) const {
-            BigNumber result = *this;
-            result += other;
-            return result;
-         }
-
-        const BigNumber operator-(const BigNumber &other) const {
-            BigNumber result = *this;
-            result -= other;
-            return result;
-         }
-
-        const BigNumber operator*(const int &other) const {
-            BigNumber result = *this;
-            result *= other;
-            return result;
-        }
-
-        const BigNumber operator/(const BigNumber &other) const {
-            BigNumber result = *this;
-            result /= other;
-            return result;
         }
 
         bool operator>(const BigNumber &rhs) const {
@@ -395,9 +394,29 @@ class BigNumber {
 
     private:
     
-        BigNumber* last_remainder;
+        int* remainder;
         int* digits;
         int size;
         bool is_neg;
 };
+
+inline BigNumber operator+(BigNumber lhs, const BigNumber &other) {
+    lhs += other;
+    return lhs;
+}
+
+inline BigNumber operator-(BigNumber lhs, const BigNumber &other) {
+    lhs -= other;
+    return lhs;
+}
+
+inline BigNumber operator*(BigNumber lhs, const int &other) {
+    lhs *= other;
+    return lhs;
+}
+
+inline BigNumber operator/(BigNumber lhs, const BigNumber &other) {
+    lhs /= other;
+    return lhs;
+}
 
