@@ -447,14 +447,13 @@ inline BigNumber operator/(BigNumber lhs, const BigNumber &other) {
 inline bool is_prime(const BigNumber& value) {
     
     BigNumber divisor(value.get_size(), 2);
-    BigNumber one(value.get_size(), 1);
     BigNumber limit = value / divisor;
     
     while (divisor < limit) {
-        if (!(value / divisor).has_remainder()) {
+        if (!(value / divisor).has_remainder())
             return false;
-        }
-        divisor += one;
+        divisor += BigNumber(value.get_size(), 1);
+        limit = value / divisor + BigNumber(value.get_size(), 1);
     }
     return true;
 }
