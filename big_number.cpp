@@ -166,19 +166,6 @@ class BigNumber {
             delete[] this->digits;            
             this->digits = new_digits;
         }
-
-        bool is_prime() {
-//            BigNumber divisor(this->size, 2);
-//            BigNumber limit = *this / divisor;
-//            
-//            while (divisor < limit) {
-//                if (*this / divisor) {
-//                    
-//                }
-//                divisor += 1;
-//            }
-            return false;
-        }
     
         BigNumber & operator=(const BigNumber &rhs)
         {
@@ -206,7 +193,7 @@ class BigNumber {
             // TODO - throw exception instead
             if (this->size != other.get_size())
             {
-                cout << "BigNumber::operator+ - Mismatched sizes." << endl;
+                cout << "BigNumber::operator+= - Mismatched sizes." << endl;
                 return *(new BigNumber(1,0));
             }
 
@@ -223,7 +210,7 @@ class BigNumber {
 
             // TODO - throw exception instead
             if (carry > 0)
-                cout << "BigNumber::operator- - Overflow." << endl;
+                cout << "BigNumber::operator+= - Overflow." << endl;
 
             return *this;
         }
@@ -245,7 +232,7 @@ class BigNumber {
             // TODO - throw exception instead
             if (this->size != other.get_size())
             {
-                cout << "BigNumber::operator- - Mismatched sizes." << endl;
+                cout << "BigNumber::operator-= - Mismatched sizes." << endl;
                 return *(new BigNumber(1,0));
             }
 
@@ -451,5 +438,24 @@ inline BigNumber operator*(BigNumber lhs, const int &other) {
 inline BigNumber operator/(BigNumber lhs, const BigNumber &other) {
     lhs /= other;    
     return lhs;
+}
+
+/*
+ *  Determines if the number is prime
+ *
+ */
+inline bool is_prime(const BigNumber& value) {
+    
+    BigNumber divisor(value.get_size(), 2);
+    BigNumber one(value.get_size(), 1);
+    BigNumber limit = value / divisor;
+    
+    while (divisor < limit) {
+        if (!(value / divisor).has_remainder()) {
+            return false;
+        }
+        divisor += one;
+    }
+    return true;
 }
 
