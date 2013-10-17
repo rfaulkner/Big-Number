@@ -124,6 +124,12 @@ class BigNumber {
             return false;
         }
 
+        void set_digits(int* digits) {
+            delete [] this->digits;
+            this->digits = digits;
+            this->size = sizeof(digits) / sizeof(int);
+        }
+    
         /*
          *  Set a digit in the array
          */
@@ -304,13 +310,6 @@ class BigNumber {
             
             BigNumber remainder(this->size, 0);
             
-            // Set to 0 if the arg is bigger
-            if (other > *this) {
-                for (int i = 0; i < this->size; i++)
-                    this->digits[i] = 0;
-                return *this;
-            }
-
             // Perform division
             while (digit_index >= 0) {
                 
@@ -370,8 +369,8 @@ class BigNumber {
                 for (int i = this->size - 1; i > rhs.get_size() - 1; i--)
                     if (this->digits[i] > 0)
                         return true;
-            
-            for (int i = this->size; i >= 0; i--) {
+
+            for (int i = this->size - 1; i >= 0; i--) {
                 if (this->digits[i] > rhs.get_digit(i))
                     return true;
                 else if (this->digits[i] < rhs.get_digit(i))
@@ -448,18 +447,14 @@ inline bool is_prime(const BigNumber& value) {
     
     BigNumber divisor(value.get_size(), 2);
     BigNumber limit = value;
-    BigNumber one(value.get_size(), 1);
+    const BigNumber one(value.get_size(), 1);
 
-    // Compute limit
-    if (value.get_size() > 1)
-        for (int i = 0; i < (value.get_most_significant_digit() + 1) / 2 - 1; i++)
-            limit.right_shift();
     while (divisor < limit) {
         if (!(value / divisor).has_remainder()) {
-            
             return false;
         }
         divisor += one;
+        limit = value / divisor + one;
     }
     return true;
 }
