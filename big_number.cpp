@@ -310,7 +310,7 @@ class BigNumber {
                     this->digits[i] = 0;
                 return *this;
             }
-            
+
             // Perform division
             while (digit_index >= 0) {
                 
@@ -327,7 +327,7 @@ class BigNumber {
                 new_digits[digit_index] = digit_value;
                 digit_index--;
             }
-    
+
             // Assign result and remainder
             delete[] this->digits;
             this->digits = new_digits;
@@ -367,7 +367,7 @@ class BigNumber {
                     if (rhs.get_digit(i) > 0)
                         return false;
             else if (this->size > rhs.get_size())
-                for (int i = this->size; i < rhs.get_size(); i++)
+                for (int i = this->size - 1; i > rhs.get_size() - 1; i--)
                     if (this->digits[i] > 0)
                         return true;
             
@@ -447,13 +447,19 @@ inline BigNumber operator/(BigNumber lhs, const BigNumber &other) {
 inline bool is_prime(const BigNumber& value) {
     
     BigNumber divisor(value.get_size(), 2);
-    BigNumber limit = value / divisor;
-    
+    BigNumber limit = value;
+    BigNumber one(value.get_size(), 1);
+
+    // Compute limit
+    if (value.get_size() > 1)
+        for (int i = 0; i < (value.get_most_significant_digit() + 1) / 2 - 1; i++)
+            limit.right_shift();
     while (divisor < limit) {
-        if (!(value / divisor).has_remainder())
+        if (!(value / divisor).has_remainder()) {
+            
             return false;
-        divisor += BigNumber(value.get_size(), 1);
-        limit = value / divisor + BigNumber(value.get_size(), 1);
+        }
+        divisor += one;
     }
     return true;
 }
