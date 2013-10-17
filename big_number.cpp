@@ -459,3 +459,25 @@ inline bool is_prime(const BigNumber& value) {
     return true;
 }
 
+/*
+ *  Determines if the number is pandigital
+ *
+ */
+inline bool is_pandigital(const BigNumber& value) {
+        
+    int size = value.get_size();
+    int* buckets = new int[size];
+    int digit;
+    
+    for (int i = 0; i < size; i ++) {
+        digit = value.get_digit(i);
+        if (digit > size)
+            return false;
+        else if (buckets[digit] == 1)
+            return false;
+        else
+            buckets[digit] = 1;                    
+    }
+    return true;
+}
+
