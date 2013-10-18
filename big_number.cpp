@@ -468,15 +468,15 @@ inline bool is_prime(const BigNumber& value) {
  */
 inline bool is_pandigital(const BigNumber& value) {
         
-    int size = value.get_size();
+    int size = value.get_most_significant_digit() + 1;
     int* buckets = new int[size];
     int digit;
     
     for (int i = 0; i < size; i ++) {
         digit = value.get_digit(i);
-        if (digit > size)
+        if (digit == 0) {
             return false;
-        else if (buckets[digit] == 1)
+        } else if (buckets[digit] == 1)
             return false;
         else
             buckets[digit] = 1;                    
