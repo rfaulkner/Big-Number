@@ -193,7 +193,7 @@ class BigNumber {
          * Adds this big number by the arg - size of operands
          */
         BigNumber & operator+=(const BigNumber& other)
-        {
+        {            
             int i, new_val, carry = 0;
 
             // TODO - throw exception instead
@@ -205,7 +205,7 @@ class BigNumber {
 
             for (i=0; i < this->size; i++)
             {
-                new_val = digits[i] + other.get_digit(i) + carry;
+                new_val = this->digits[i] + other.get_digit(i) + carry;
 
                 this->digits[i] = new_val % 10;
                 if (new_val >= 10)
@@ -316,7 +316,7 @@ class BigNumber {
                 digit_value = 0;
                 
                 remainder.left_shift();
-                remainder.set_digit(0, this->get_digit(digit_index));
+                remainder.set_digit(0, this->digits[digit_index]);
                 
                 while (remainder >= other) {
                     digit_value++;
@@ -327,11 +327,14 @@ class BigNumber {
                 digit_index--;
             }
 
+            // Keep the padding consistent
+            for (int i = this->get_most_significant_digit() + 1; i < this->size; i++)
+                new_digits[i] = 0;
+                        
             // Assign result and remainder
             delete[] this->digits;
             this->digits = new_digits;
             
-
             if (this->remainder != NULL)
                 delete this->remainder;
 
@@ -435,7 +438,7 @@ inline BigNumber operator*(BigNumber lhs, const int &other) {
 }
 
 inline BigNumber operator/(BigNumber lhs, const BigNumber &other) {
-    lhs /= other;    
+    lhs /= other;
     return lhs;
 }
 
@@ -450,11 +453,11 @@ inline bool is_prime(const BigNumber& value) {
     const BigNumber one(value.get_size(), 1);
 
     while (divisor < limit) {
-        if (!(value / divisor).has_remainder()) {
+        limit = value / divisor;
+        if (!limit.has_remainder())
             return false;
-        }
-        divisor += one;
-        limit = value / divisor + one;
+        divisor += one;        
+        limit += one;        
     }
     return true;
 }
