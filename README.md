@@ -1,7 +1,13 @@
 Big-Number
 ==========
 
-Implement a class in C++ that allows you to create integers of arbitrary size.
+Implements a C++ class that allows you to create integers of arbitrary size.  This data structure can be
+handy when you want to avoid overflow and has proven a handy way to solve project Euler [1] problems.
+
+[1] http://projecteuler.net
+
+Example
+-------
 
 The following code snippet illustrates basic usage:
 
